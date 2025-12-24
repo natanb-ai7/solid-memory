@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: solid
+      POSTGRES_PASSWORD: memory
+      POSTGRES_DB: catalog
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      DATABASE_URL: postgresql+psycopg2://solid:memory@db:5432/catalog
+    depends_on:
+      - db
+    command: ["bash", "-c", "python scripts/migrate.py && python scripts/seed_catalog.py"]
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      DATABASE_URL: postgresql+psycopg2://solid:memory@db:5432/catalog
+    depends_on:
+      - migrate
+    ports:
+      - "8000:8000"
+
+  collector:
+    build:
+      context: .
+      dockerfile: Dockerfile.collector
+    environment:
+      DATABASE_URL: postgresql+psycopg2://solid:memory@db:5432/catalog
+    depends_on:
+      - migrate
+
+volumes:
+  db_data:

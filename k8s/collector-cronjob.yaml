@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: catalog-collector
+spec:
+  schedule: "0 * * * *"
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: collector
+              image: solid-memory-collector:latest
+              imagePullPolicy: IfNotPresent
+              env:
+                - name: DATABASE_URL
+                  value: postgresql+psycopg2://solid:memory@postgres:5432/catalog
+              args: ["python", "-m", "collector.main"]
