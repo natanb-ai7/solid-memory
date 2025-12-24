@@ -1,0 +1,27 @@
+- id: oem-brochure-eu
+  oem: Northwind Motors
+  brand: "Northwind"
+  region: EU
+  url: https://example.com/northwind/brochures/latest.pdf
+  format: pdf
+  cadence: weekly
+  auth: none
+  description: Weekly refreshed OEM brochure PDF.
+- id: dealer-site-us
+  oem: Fabrikam Auto
+  brand: "Fabrikam"
+  region: US
+  url: https://dealer.fabrikam-auto.com/inventory
+  format: html
+  cadence: daily
+  auth: session-cookie
+  description: Dealer site HTML inventory feed that updates daily.
+- id: telematics-api-global
+  oem: Contoso Mobility
+  brand: "Contoso"
+  region: Global
+  url: https://api.contoso-mobility.com/v1/vehicles
+  format: json_api
+  cadence: daily
+  auth: bearer-token
+  description: JSON API feed for global telematics data refreshed every 24h.
