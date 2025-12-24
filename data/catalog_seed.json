@@ -1,0 +1,23 @@
+[
+  {
+    "make": "Toyota",
+    "models": [
+      {"name": "Camry", "trims": ["LE", "SE", "XSE"]},
+      {"name": "RAV4", "trims": ["XLE", "TRD Off-Road"]}
+    ]
+  },
+  {
+    "make": "Honda",
+    "models": [
+      {"name": "Accord", "trims": ["Sport", "Touring"]},
+      {"name": "Civic", "trims": ["LX", "EX"]}
+    ]
+  },
+  {
+    "make": "Ford",
+    "models": [
+      {"name": "F-150", "trims": ["XL", "XLT", "Lariat"]},
+      {"name": "Mustang", "trims": ["EcoBoost", "GT"]}
+    ]
+  }
+]

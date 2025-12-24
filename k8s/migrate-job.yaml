@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: catalog-migrate
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: migrate
+          image: solid-memory-api:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DATABASE_URL
+              value: postgresql+psycopg2://solid:memory@postgres:5432/catalog
+          command: ["bash", "-c", "python scripts/migrate.py && python scripts/seed_catalog.py"]
