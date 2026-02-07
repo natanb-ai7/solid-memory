@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Query
 from sqlalchemy.orm import Session
 from datetime import datetime
 from loguru import logger
@@ -17,10 +17,14 @@ async def health():
 
 @app.get("/listings", response_model=list[schemas.DealWithScore])
 async def list_listings(
+    model: str | None = Query(default=None),
     db: Session = Depends(get_db),
     _auth: bool = Depends(require_auth),
 ):
-    listings = db.query(models.Listing).filter(models.Listing.listing_status == "active").all()
+    query = db.query(models.Listing).filter(models.Listing.listing_status == "active")
+    if model:
+        query = query.filter(models.Listing.model == model)
+    listings = query.all()
     results = []
     for listing in listings:
         score = scoring.compute_value_score(listing.__dict__)
