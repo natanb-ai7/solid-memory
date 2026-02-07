@@ -84,3 +84,22 @@ Open `backend/app/scoring.py` and update `DEFAULT_WEIGHTS` or trim baselines in 
 
 ## Screenshots
 Placeholder UI is shipped via Tailwind components. Replace with real screenshots after running the frontend.
+
+## Running with clawdbot
+If your clawdbot can run shell commands in a repo, share this repository with it and have it execute:
+
+```bash
+cp .env.example .env
+docker compose up --build -d
+docker compose exec backend alembic upgrade head
+```
+
+Then point it at:
+- Frontend: http://localhost:3000
+- Backend: http://localhost:8000/docs
+
+If clawdbot expects a single startup command, use:
+
+```bash
+docker compose up --build
+```
