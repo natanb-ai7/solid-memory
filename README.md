@@ -40,6 +40,8 @@ Visit:
 - Search results (query-based discovery)
 - Manual URL add
 
+Before scraping listings, the worker first discovers dealer URLs via search queries to seed dealer inventory pages.
+
 Adapters live in `worker/adapters/` and share a `discover()`, `scrape_listing()`, `normalize()` interface.
 
 ## Scoring model

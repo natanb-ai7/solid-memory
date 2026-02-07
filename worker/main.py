@@ -11,6 +11,7 @@ from .adapters.aggregator import AggregatorAdapter
 from .adapters.search import SearchAdapter
 from .adapters.manual import ManualAdapter
 from .notifications import send_email
+from .dealer_discovery import discover_dealer_urls
 
 
 redis_conn = Redis.from_url(settings.redis_url)
@@ -40,8 +41,15 @@ def run_scrape_job():
 
     blocked_domains: list[str] = []
     failures = 0
+    dealer_urls = discover_dealer_urls(
+        [
+            "BMW dealer i7 loaner inventory",
+            "BMW i7 service loaner site:bmw",
+            "BMW i7 loaner VDP BMW dealer",
+        ]
+    )
     adapters = [
-        DealerSiteAdapter([]),
+        DealerSiteAdapter(dealer_urls),
         AggregatorAdapter([]),
         SearchAdapter(["BMW i7 loaner \"service loaner\""]),
         ManualAdapter([]),
