@@ -1,0 +1,6 @@
+company,segment,last_touch_date,signal_score_components,notes,owner,next_action,status
+Aperture Servicing,servicing,2026-02-08,HiringChange=0.6;NewsEvent=0.4;CapitalEvent=0.2;PartnershipSignal=0.1,Expanding special servicing footprint.,CM Director,Intro call with CEO.,active
+Beacon Analytics,analytics,2026-02-08,HiringChange=0.3;NewsEvent=0.5;CapitalEvent=0.2;PartnershipSignal=0.1,Raised Series B.,CM Director,Discuss data partnership.,active
+Summit Origination,origination,2026-02-08,HiringChange=0.2;NewsEvent=0.2;CapitalEvent=0.4;PartnershipSignal=0.1,New warehouse line.,CM Director,Share REIT balance sheet story.,active
+NorthBridge Special Sits,special sits,2026-02-08,HiringChange=0.5;NewsEvent=0.3;CapitalEvent=0.2;PartnershipSignal=0.2,Hiring restructuring team.,CM Director,Set diligence call.,active
+Cobalt Data,data,2026-02-08,HiringChange=0.4;NewsEvent=0.2;CapitalEvent=0.1;PartnershipSignal=0.3,Launching CRE data product.,CM Director,Request demo.,active

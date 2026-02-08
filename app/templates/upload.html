@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Upload Data</title>
+  </head>
+  <body>
+    <h1>Upload Data</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <label>Portfolio Positions CSV/XLSX: <input type="file" name="portfolio" /></label><br />
+      <label>Funding Terms CSV/XLSX: <input type="file" name="funding" /></label><br />
+      <label>Hedge Book CSV/XLSX: <input type="file" name="hedge" /></label><br />
+      <label>Market Indicators CSV/XLSX: <input type="file" name="market" /></label><br />
+      <label>M&amp;A Targets CSV/XLSX: <input type="file" name="ma_targets" /></label><br />
+      <button type="submit">Upload</button>
+    </form>
+    <a href="/">Back</a>
+  </body>
+</html>

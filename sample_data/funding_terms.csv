@@ -1,0 +1,3 @@
+counterparty,asof_date,haircut,spread,advance_rate,margin_call_terms,eligible_assets_rules
+Repo Bank A,2026-02-08,0.32,225,0.68,Daily margin calls with 2% buffer.,AAA/AA rated CMBS only.
+Repo Bank B,2026-02-08,0.28,210,0.72,Weekly margin calls.,AAA/AA/A rated CMBS.

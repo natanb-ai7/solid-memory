@@ -1,0 +1,5 @@
+indicator,asof_date,value,unit
+SOFR_1M,2026-02-08,5.32,%
+CMBX6_AAA,2026-02-08,96.4,price
+CDX_IG,2026-02-08,68.2,bps
+VIX,2026-02-08,14.6,index
