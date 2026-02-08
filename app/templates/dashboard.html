@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Synergy Dashboard</title>
+</head>
+<body>
+  <h1>Integration Synergy Strategy Tracker</h1>
+  <p><a href="/targets">Targets</a> | <a href="/daily-brief">Daily Brief</a> | <a href="/evidence">Evidence</a> | <a href="/config">Config</a> | <a href="/runs">Run History</a></p>
+  <table border="1" cellpadding="6">
+    <tr><th>Target</th><th>Segment</th><th>Status</th><th>TSS</th><th>Drift 5d</th><th>Confidence</th></tr>
+    {% for row in scores %}
+      <tr>
+        <td>{{ row.common_name }}</td>
+        <td>{{ row.segment }}</td>
+        <td>{{ row.status }}</td>
+        <td>{{ row.TSS }}</td>
+        <td>{{ row.drift_5d }}</td>
+        <td>{{ row.score_confidence_pct }}%</td>
+      </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

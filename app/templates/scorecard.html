@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Scorecard - {{ target.common_name }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    h2 { border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 6px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Integration Synergy Strategy Tracker</h1>
+  <h2>A) Header</h2>
+  <p><strong>Target:</strong> {{ target.common_name }} ({{ target.legal_name }})</p>
+  <p><strong>Date:</strong> {{ score.asof_date }} | <strong>Run:</strong> {{ run_id }} | <strong>Audit State:</strong> {{ audit_state }}</p>
+  <p><strong>Data freshness:</strong> {{ score.data_freshness_days }} days</p>
+
+  <h2>B) TSS + Drift + Confidence + Evidence Coverage</h2>
+  <div class="grid">
+    <div><strong>TSS:</strong> {{ score.TSS }}</div>
+    <div><strong>Drift 5d:</strong> {{ score.drift_5d }}</div>
+    <div><strong>Drift 20d:</strong> {{ score.drift_20d }}</div>
+    <div><strong>Confidence:</strong> {{ score.score_confidence_pct }}%</div>
+    <div><strong>Evidence Coverage:</strong> {{ score.evidence_coverage_pct }}%</div>
+  </div>
+
+  <h2>C) Bucket Breakdown</h2>
+  <table>
+    <tr><th>Bucket</th><th>Score</th><th>Coverage</th><th>Confidence</th></tr>
+    <tr><td>FES</td><td>{{ score.FES }}</td><td>{{ score.bucket_coverage.FES }}%</td><td>{{ score.bucket_confidence.FES }}%</td></tr>
+    <tr><td>LMS</td><td>{{ score.LMS }}</td><td>{{ score.bucket_coverage.LMS }}%</td><td>{{ score.bucket_confidence.LMS }}%</td></tr>
+    <tr><td>OS</td><td>{{ score.OS }}</td><td>{{ score.bucket_coverage.OS }}%</td><td>{{ score.bucket_confidence.OS }}%</td></tr>
+    <tr><td>DMS</td><td>{{ score.DMS }}</td><td>{{ score.bucket_coverage.DMS }}%</td><td>{{ score.bucket_confidence.DMS }}%</td></tr>
+    <tr><td>OLS</td><td>{{ score.OLS }}</td><td>{{ score.bucket_coverage.OLS }}%</td><td>{{ score.bucket_confidence.OLS }}%</td></tr>
+  </table>
+
+  <h2>D) Top 3 Synergy Levers</h2>
+  <ul>
+    {% for lever in score.top_levers %}
+      <li>{{ lever }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>E) Top 3 Integration Risks</h2>
+  <ul>
+    {% for risk in score.top_risks %}
+      <li>{{ risk }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>F) Next Best Actions</h2>
+  <ul>
+    {% for action in score.next_best_actions %}
+      <li>{{ action.action }} (Owner: {{ action.owner }} | Due: {{ action.due_date }})</li>
+    {% endfor %}
+  </ul>
+
+  <h2>G) What changed since yesterday?</h2>
+  <ul>
+    {% for item in change_summary %}
+      <li>{{ item }}</li>
+    {% endfor %}
+  </ul>
+
+  <h2>H) Appendix: Evidence Table</h2>
+  <table>
+    <tr><th>Title</th><th>Type</th><th>Source</th><th>Confidence</th></tr>
+    {% for item in evidence %}
+      <tr>
+        <td>{{ item.title }}</td>
+        <td>{{ item.evidence_type }}</td>
+        <td>{{ item.source_url or item.file_ref }}</td>
+        <td>{{ item.confidence }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+  <p>Generated at {{ generated_at }}</p>
+</body>
+</html>

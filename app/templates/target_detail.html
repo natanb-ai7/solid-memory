@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{{ target.common_name }}</title>
+</head>
+<body>
+  <h1>{{ target.common_name }}</h1>
+  <p>{{ target.strategic_fit_notes }}</p>
+
+  <h2>Score Timeline</h2>
+  <table border="1" cellpadding="6">
+    <tr><th>Date</th><th>TSS</th><th>Drift 5d</th><th>Confidence</th></tr>
+    {% for row in scores %}
+      <tr>
+        <td>{{ row.asof_date }}</td>
+        <td>{{ row.TSS }}</td>
+        <td>{{ row.drift_5d }}</td>
+        <td>{{ row.score_confidence_pct }}%</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <h2>Evidence Library</h2>
+  <ul>
+    {% for item in evidence %}
+      <li>{{ item.title }} - {{ item.source_url or item.file_ref }}</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
