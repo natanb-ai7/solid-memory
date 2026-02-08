@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Daily Brief</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 6px; font-size: 12px; }
+    .section { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Top Targets Today</h1>
+  <p><strong>Date:</strong> {{ asof_date }} | <strong>Audit:</strong> {{ audit_state if audit_state else 'N/A' }}</p>
+
+  <div class="section">
+    <h2>Top 10 Targets by TSS</h2>
+    <table>
+      <tr><th>Target</th><th>Segment</th><th>TSS</th><th>Drift 5d</th><th>Confidence</th></tr>
+      {% for row in scores[:10] %}
+        <tr>
+          <td>{{ row.common_name }}</td>
+          <td>{{ row.segment }}</td>
+          <td>{{ row.TSS }}</td>
+          <td>{{ row.drift_5d }}</td>
+          <td>{{ row.score_confidence_pct }}%</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Top 5 Positive Drifts</h2>
+    <ul>
+      {% for row in scores|sort(attribute='drift_5d', reverse=True)[:5] %}
+        <li>{{ row.common_name }}: {{ row.drift_5d }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Top 5 Negative Drifts</h2>
+    <ul>
+      {% for row in scores|sort(attribute='drift_5d')[:5] %}
+        <li>{{ row.common_name }}: {{ row.drift_5d }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Action Queue</h2>
+    <ul>
+      {% for row in scores[:10] %}
+        <li>
+          <strong>{{ row.common_name }}</strong>
+          <ul>
+            {% for action in row.next_best_actions %}
+              <li>{{ action.action }} (Owner: {{ action.owner }} | Due: {{ action.due_date }})</li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Market Context</h2>
+    {% if market %}
+      <p>{{ market.rates_context }}</p>
+      <p>FTI: {{ market.funding_tightness_index }}</p>
+    {% else %}
+      <p>No market context provided.</p>
+    {% endif %}
+  </div>
+
+  <div class="section">
+    <h2>Audit Warnings Summary</h2>
+    <p>Run validators to see detailed audit warnings.</p>
+  </div>
+  <p>Generated at {{ generated_at if generated_at else '' }}</p>
+</body>
+</html>

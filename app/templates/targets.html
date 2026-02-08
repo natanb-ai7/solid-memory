@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Targets</title>
+</head>
+<body>
+  <h1>Targets</h1>
+  <table border="1" cellpadding="6">
+    <tr><th>Target</th><th>Segment</th><th>Status</th><th>TSS</th><th>Drift 5d</th><th>Confidence</th></tr>
+    {% for row in scores %}
+      <tr>
+        <td><a href="/targets/{{ row.target_id }}">{{ row.common_name }}</a></td>
+        <td>{{ row.segment }}</td>
+        <td>{{ row.status }}</td>
+        <td>{{ row.TSS }}</td>
+        <td>{{ row.drift_5d }}</td>
+        <td>{{ row.score_confidence_pct }}%</td>
+      </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

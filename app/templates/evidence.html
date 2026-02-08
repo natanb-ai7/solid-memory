@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Evidence Library</title>
+</head>
+<body>
+  <h1>Evidence Library</h1>
+  <table border="1" cellpadding="6">
+    <tr><th>Target</th><th>Date</th><th>Title</th><th>Type</th><th>Source</th><th>Confidence</th></tr>
+    {% for item in evidence %}
+      <tr>
+        <td>{{ item.target_id }}</td>
+        <td>{{ item.asof_date }}</td>
+        <td>{{ item.title }}</td>
+        <td>{{ item.evidence_type }}</td>
+        <td>{{ item.source_url or item.file_ref }}</td>
+        <td>{{ item.confidence }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</body>
+</html>

@@ -1,0 +1,40 @@
+weights:
+  FES:
+    counterparty_access: 0.35
+    collateral_eligibility_lift: 0.35
+    haircut_or_term_benefit: 0.30
+  LMS:
+    surveillance_delta: 0.40
+    workout_edge: 0.30
+    early_warning_coverage: 0.30
+  OS:
+    channel_scale: 0.50
+    borrower_overlap: 0.30
+    speed_to_close: 0.20
+  DMS:
+    uniqueness: 0.50
+    integration_readiness: 0.30
+    contracts_durability: 0.20
+  OLS:
+    cost_takeout_feasibility: 0.60
+    process_redundancy: 0.40
+  TSS:
+    FES: 0.25
+    LMS: 0.25
+    OS: 0.20
+    DMS: 0.20
+    OLS: 0.10
+thresholds:
+  min_evidence_coverage_pct: 60
+  min_confidence_pct: 50
+  accelerate_tss: 7.5
+  accelerate_drift_5d: 0.5
+  accelerate_confidence_pct: 70
+  deprioritize_tss: 6.0
+  deprioritize_drift_5d: -0.7
+rules:
+  structure_reprice_fti_z: 1.0
+  structure_reprice_fes: 6.5
+  risk_review_complexity: 4
+  freshness_max_days: 30
+  freshness_full_days: 7
