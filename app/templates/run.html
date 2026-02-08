@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Run Status</title>
+  </head>
+  <body>
+    <h1>Run Status</h1>
+    {% if status == "success" %}
+    <p>Run completed. Outputs:</p>
+    <ul>
+      <li>JSON: {{ outputs["json"] }}</li>
+      <li>HTML: {{ outputs["html"] }}</li>
+      <li>PDF: {{ outputs["pdf"] }}</li>
+    </ul>
+    {% elif status == "failed" %}
+    <p>Validation failed. Fix-it report:</p>
+    <ul>
+      {% for issue in issues %}
+      <li>[{{ issue.level }}] {{ issue.message }} -> {{ issue.suggestion }}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>Memo not found.</p>
+    {% endif %}
+    <a href="/">Back</a>
+  </body>
+</html>

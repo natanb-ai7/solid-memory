@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Manual Entry</title>
+  </head>
+  <body>
+    <h1>Manual Entry</h1>
+    <form action="/manual" method="post">
+      <label>
+        Dataset:
+        <select name="dataset">
+          <option value="portfolio_positions">Portfolio Positions</option>
+          <option value="funding_terms">Funding Terms</option>
+          <option value="hedge_book">Hedge Book</option>
+          <option value="market_indicators">Market Indicators</option>
+          <option value="ma_targets">M&amp;A Targets</option>
+        </select>
+      </label>
+      <br />
+      <label>
+        JSON payload (one record):
+        <br />
+        <textarea name="payload" rows="10" cols="80">{}</textarea>
+      </label>
+      <br />
+      <button type="submit">Append Record</button>
+    </form>
+    <a href="/">Back</a>
+  </body>
+</html>

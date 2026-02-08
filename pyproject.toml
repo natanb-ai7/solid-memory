@@ -1,0 +1,36 @@
+[project]
+name = "prewire"
+version = "0.1.0"
+description = "IC Memo Pre-Wire system for capital markets daily decisioning."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.110.0",
+  "jinja2>=3.1.3",
+  "pandas>=2.2.0",
+  "pydantic>=2.6.0",
+  "python-multipart>=0.0.9",
+  "pytest>=7.4.0",
+  "typer>=0.12.0",
+  "uvicorn>=0.27.0",
+  "weasyprint>=61.0",
+  "openpyxl>=3.1.2",
+]
+
+[project.scripts]
+prewire = "prewire.cli:app"
+
+[tool.setuptools]
+package-dir = {"" = "engine"}
+packages = ["prewire", "prewire.connectors"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.black]
+line-length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = ["E", "F", "I", "B", "UP"]

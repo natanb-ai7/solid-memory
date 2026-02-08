@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>IC Memo Pre-Wire</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <h1>IC Memo Pre-Wire</h1>
+    <div class="actions">
+      <form action="/run" method="post">
+        <label>
+          Data directory (optional):
+          <input type="text" name="data_dir" placeholder="sample_data" />
+        </label>
+        <label>
+          <input type="checkbox" name="redaction" value="true" />
+          Redaction mode
+        </label>
+        <button type="submit">Run Today</button>
+      </form>
+      <a href="/upload">Upload Data</a>
+      <a href="/manual">Manual Entry</a>
+    </div>
+    <h2>Run History</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Run ID</th>
+          <th>Run Date</th>
+          <th>Status</th>
+          <th>Output</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in runs %}
+        <tr>
+          <td>{{ run.run_id }}</td>
+          <td>{{ run.run_date }}</td>
+          <td>{{ run.status }}</td>
+          <td><a href="/memo/{{ run.run_id }}">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

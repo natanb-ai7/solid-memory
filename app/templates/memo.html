@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>IC Memo Pre-Wire</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        margin: 24px;
+      }
+      h1,
+      h2 {
+        margin-bottom: 6px;
+      }
+      .section {
+        margin-bottom: 16px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 4px;
+        text-align: left;
+      }
+      .small {
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>IC Memo Pre-Wire</h1>
+    <div class="section">
+      <strong>Header:</strong>
+      <div>Date/Time: {{ memo.run_date }}</div>
+      <div>Data Freshness: {{ memo.data_freshness }}</div>
+      <div>Run ID: {{ memo.run_id }}</div>
+    </div>
+
+    <div class="section">
+      <h2>Today’s Top 3 Decisions</h2>
+      <ul>
+        {% for decision in memo.decisions %}
+        <li>
+          <strong>Action:</strong> {{ decision.action }}<br />
+          <strong>Rationale:</strong> {{ decision.rationale }}<br />
+          <strong>Data:</strong> {{ decision.data }}<br />
+          <strong>Trigger:</strong> {{ decision.trigger }}<br />
+          <strong>Next Step:</strong> {{ decision.next_step }}<br />
+          <strong>Confidence:</strong> {{ decision.confidence }}
+        </li>
+        {% endfor %}
+      </ul>
+      <div class="small">
+        <strong>Action Triggers:</strong> Thresholds and next steps are embedded in each decision.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Today’s Top 3 Risks</h2>
+      <ul>
+        {% for risk in memo.risks %}
+        <li>
+          <strong>What:</strong> {{ risk.what }}<br />
+          <strong>Why:</strong> {{ risk.why }}<br />
+          <strong>Triggers:</strong> {{ risk.triggers }}<br />
+          <strong>Mitigants:</strong> {{ risk.mitigants }}<br />
+          <strong>What changes my mind:</strong> {{ risk.change_mind }}<br />
+          <strong>Confidence:</strong> {{ risk.confidence }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Liquidity &amp; Funding Readiness</h2>
+      <div>FTI: {{ memo.liquidity.FTI }}</div>
+      <div>Direction: {{ memo.liquidity.FTI_direction }}</div>
+      <div>Summary: {{ memo.liquidity.summary }}</div>
+      <div>Eligibility: {{ memo.liquidity.eligibility }}</div>
+      <div>Notes: {{ memo.liquidity.notes }}</div>
+    </div>
+
+    <div class="section">
+      <h2>Portfolio Risk Heat</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>CUSIP</th>
+            <th>Score</th>
+            <th>Drivers</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in memo.portfolio_heat %}
+          <tr>
+            <td>{{ row.cusip }}</td>
+            <td>{{ row.score }}</td>
+            <td>{{ row.drivers }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>Hedge Hygiene</h2>
+      <div>Drift: {{ memo.hedge_hygiene.drift }}</div>
+      <div>Basis: {{ memo.hedge_hygiene.basis }}</div>
+      <div>Concentration: {{ memo.hedge_hygiene.concentration }}</div>
+      <div>Notes: {{ memo.hedge_hygiene.notes }}</div>
+    </div>
+
+    <div class="section">
+      <h2>Special Servicing &amp; Refi Movers</h2>
+      <ul>
+        {% for item in memo.special_servicing_movers %}
+        <li>{{ item.cusip }} - {{ item.status }} - {{ item.comment }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>M&amp;A Pipeline: Today’s 5 Calls</h2>
+      <ul>
+        {% for call in memo.ma_pipeline %}
+        <li>
+          <strong>{{ call.company }}</strong> - {{ call.thesis }} (Signal: {{ call.signal }})
+          <br />
+          Outreach angle: {{ call.angle }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Appendix: Sources &amp; Calculations</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+            <th>Source</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in memo.appendix %}
+          <tr>
+            <td>{{ row.metric }}</td>
+            <td>{{ row.value }}</td>
+            <td>{{ row.source }}</td>
+            <td>{{ row.timestamp }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
