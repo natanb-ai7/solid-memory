@@ -1,0 +1,21 @@
+{
+  "uid": "cost-analysis",
+  "title": "Cost Analysis",
+  "schemaVersion": 39,
+  "version": 1,
+  "timezone": "browser",
+  "refresh": "1m",
+  "templating": {
+    "list": [
+      {"name": "model", "type": "query", "datasource": {"type": "prometheus", "uid": "prometheus"}, "definition": "label_values(openclaw_api_calls_total, model)", "query": {"query": "label_values(openclaw_api_calls_total, model)", "refId": "A"}, "includeAll": true, "multi": true},
+      {"name": "provider", "type": "query", "datasource": {"type": "prometheus", "uid": "prometheus"}, "definition": "label_values(openclaw_cost_dollars_total, provider)", "query": {"query": "label_values(openclaw_cost_dollars_total, provider)", "refId": "B"}, "includeAll": true, "multi": true},
+      {"name": "instance", "type": "query", "datasource": {"type": "prometheus", "uid": "prometheus"}, "definition": "label_values(up, instance)", "query": {"query": "label_values(up, instance)", "refId": "C"}, "includeAll": true, "multi": true}
+    ]
+  },
+  "panels": [
+    {"id": 1, "type": "timeseries", "title": "Daily cost trend", "datasource": {"type": "prometheus", "uid": "prometheus"}, "targets": [{"expr": "sum(increase(openclaw_cost_dollars_total{provider=~\"$provider\"}[1d])) by (provider)", "refId": "A"}], "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}},
+    {"id": 2, "type": "stat", "title": "Spend today", "datasource": {"type": "prometheus", "uid": "prometheus"}, "targets": [{"expr": "sum(increase(openclaw_cost_dollars_total[1d]))", "refId": "A"}], "gridPos": {"h": 8, "w": 6, "x": 12, "y": 0}},
+    {"id": 3, "type": "stat", "title": "Projected monthly spend", "datasource": {"type": "prometheus", "uid": "prometheus"}, "targets": [{"expr": "(sum(increase(openclaw_cost_dollars_total[7d])) / 7) * 30", "refId": "A"}], "fieldConfig": {"defaults": {"thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "orange", "value": 300}, {"color": "red", "value": 500}]}}}, "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0}},
+    {"id": 4, "type": "text", "title": "Cost hygiene tips", "options": {"content": "- Keep TOP_MODELS/TOP_PROVIDERS caps low to limit metric cardinality.\n- Monitor parse errors to avoid stale cost metrics.\n- Review projected spend weekly and update alert threshold before overrun.", "mode": "markdown"}, "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}}
+  ]
+}

@@ -1,0 +1,197 @@
+version: '3.8'
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  nginx:
+    image: nginx:1.25.4-alpine
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - grafana
+      - prometheus
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:8443/grafana/ >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    cpus: 0.25
+    mem_limit: 128m
+    logging: *default-logging
+
+  grafana:
+    image: grafana/grafana:10.4.5
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./grafana.ini:/etc/grafana/grafana.ini:ro
+      - ./provisioning:/etc/grafana/provisioning:ro
+      - ./dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:3000/api/health >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 1g
+    logging: *default-logging
+
+  prometheus:
+    image: prom/prometheus:v2.51.2
+    ports:
+      - "9090:9090"
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=30d
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:9090/-/healthy >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    cpus: 1.0
+    mem_limit: 2g
+    logging: *default-logging
+
+  node-exporter:
+    image: prom/node-exporter:v1.7.0
+    ports:
+      - "9100:9100"
+    command:
+      - --path.procfs=/host/proc
+      - --path.rootfs=/rootfs
+      - --path.sysfs=/host/sys
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:9100/metrics >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 256m
+    logging: *default-logging
+
+  openclaw-exporter:
+    build:
+      context: ./exporter
+    ports:
+      - "9091:9091"
+    environment:
+      SESSIONS_JSON: /data/sessions/sessions.json
+      POLL_SECONDS: 10
+      TOP_MODELS: 10
+      TOP_PROVIDERS: 10
+      MAX_FILE_MB: 50
+    volumes:
+      - ${HOME}/.openclaw/agents/main/sessions/:/data/sessions/:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:9091/metrics >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 512m
+    logging: *default-logging
+
+  loki:
+    image: grafana/loki:2.9.6
+    ports:
+      - "3100:3100"
+    command:
+      - -config.file=/etc/loki/local-config.yaml
+      - -config.expand-env=true
+      - -target=all
+    environment:
+      LOKI_RETENTION_PERIOD: 168h
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        cat > /etc/loki/local-config.yaml <<'EOF'
+        auth_enabled: false
+        server:
+          http_listen_port: 3100
+          grpc_listen_port: 9096
+        common:
+          path_prefix: /loki
+          replication_factor: 1
+          ring:
+            kvstore:
+              store: inmemory
+        schema_config:
+          configs:
+            - from: 2024-01-01
+              store: tsdb
+              object_store: filesystem
+              schema: v13
+              index:
+                prefix: index_
+                period: 24h
+        storage_config:
+          filesystem:
+            chunks_directory: /loki/chunks
+            rules_directory: /loki/rules
+        compactor:
+          working_directory: /loki/compactor
+          retention_enabled: true
+          delete_request_store: filesystem
+        limits_config:
+          retention_period: ${LOKI_RETENTION_PERIOD}
+          ingestion_rate_mb: 4
+          ingestion_burst_size_mb: 8
+          reject_old_samples: true
+          reject_old_samples_max_age: 168h
+        analytics:
+          reporting_enabled: false
+        EOF
+        exec /usr/bin/loki -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - loki_data:/loki
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost:3100/ready >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 512m
+    logging: *default-logging
+
+  promtail:
+    image: grafana/promtail:2.9.6
+    command: ["-config.file=/etc/promtail/config.yml"]
+    volumes:
+      - ./promtail-config.yaml:/etc/promtail/config.yml:ro
+      - /var/log:/var/log:ro
+    depends_on:
+      - loki
+    restart: unless-stopped
+    cpus: 0.25
+    mem_limit: 256m
+    logging: *default-logging
+
+volumes:
+  grafana_data:
+  prometheus_data:
+  loki_data:

@@ -1,0 +1,23 @@
+{
+  "uid": "system-health",
+  "title": "System Health",
+  "schemaVersion": 39,
+  "version": 1,
+  "timezone": "browser",
+  "refresh": "30s",
+  "templating": {
+    "list": [
+      {"name": "model", "type": "query", "datasource": {"type": "prometheus", "uid": "prometheus"}, "definition": "label_values(openclaw_api_calls_total, model)", "query": {"query": "label_values(openclaw_api_calls_total, model)", "refId": "A"}, "includeAll": true, "multi": true},
+      {"name": "provider", "type": "query", "datasource": {"type": "prometheus", "uid": "prometheus"}, "definition": "label_values(openclaw_cost_dollars_total, provider)", "query": {"query": "label_values(openclaw_cost_dollars_total, provider)", "refId": "B"}, "includeAll": true, "multi": true},
+      {"name": "instance", "type": "query", "datasource": {"type": "prometheus", "uid": "prometheus"}, "definition": "label_values(up, instance)", "query": {"query": "label_values(up, instance)", "refId": "C"}, "includeAll": true, "multi": true}
+    ]
+  },
+  "panels": [
+    {"id": 1, "type": "timeseries", "title": "CPU usage %", "datasource": {"type": "prometheus", "uid": "prometheus"}, "targets": [{"expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\",instance=~\"$instance\"}[5m])) * 100)", "refId": "A"}], "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0}},
+    {"id": 2, "type": "timeseries", "title": "Memory usage %", "datasource": {"type": "prometheus", "uid": "prometheus"}, "targets": [{"expr": "(1 - (node_memory_MemAvailable_bytes{instance=~\"$instance\"} / node_memory_MemTotal_bytes{instance=~\"$instance\"})) * 100", "refId": "A"}], "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0}},
+    {"id": 3, "type": "timeseries", "title": "Disk usage %", "datasource": {"type": "prometheus", "uid": "prometheus"}, "targets": [{"expr": "(1 - (node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",instance=~\"$instance\"} / node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",instance=~\"$instance\"})) * 100", "refId": "A"}], "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0}},
+    {"id": 4, "type": "timeseries", "title": "Network I/O", "datasource": {"type": "prometheus", "uid": "prometheus"}, "targets": [{"expr": "rate(node_network_receive_bytes_total{instance=~\"$instance\"}[5m])", "legendFormat": "receive {{device}}", "refId": "A"}, {"expr": "rate(node_network_transmit_bytes_total{instance=~\"$instance\"}[5m])", "legendFormat": "transmit {{device}}", "refId": "B"}], "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}},
+    {"id": 5, "type": "stat", "title": "Uptime", "datasource": {"type": "prometheus", "uid": "prometheus"}, "targets": [{"expr": "node_time_seconds{instance=~\"$instance\"} - node_boot_time_seconds{instance=~\"$instance\"}", "refId": "A"}], "gridPos": {"h": 8, "w": 6, "x": 12, "y": 8}},
+    {"id": 6, "type": "stat", "title": "Targets Up", "datasource": {"type": "prometheus", "uid": "prometheus"}, "targets": [{"expr": "sum(up)", "refId": "A"}], "gridPos": {"h": 8, "w": 6, "x": 18, "y": 8}}
+  ]
+}
