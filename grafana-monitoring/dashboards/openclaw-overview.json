@@ -1,0 +1,104 @@
+{
+  "uid": "openclaw-overview",
+  "title": "OpenClaw Overview",
+  "schemaVersion": 39,
+  "version": 1,
+  "timezone": "browser",
+  "refresh": "30s",
+  "templating": {
+    "list": [
+      {
+        "name": "model",
+        "type": "query",
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "definition": "label_values(openclaw_api_calls_total, model)",
+        "query": {"query": "label_values(openclaw_api_calls_total, model)", "refId": "ModelVar"},
+        "includeAll": true,
+        "multi": true
+      },
+      {
+        "name": "provider",
+        "type": "query",
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "definition": "label_values(openclaw_cost_dollars_total, provider)",
+        "query": {"query": "label_values(openclaw_cost_dollars_total, provider)", "refId": "ProviderVar"},
+        "includeAll": true,
+        "multi": true
+      },
+      {
+        "name": "instance",
+        "type": "query",
+        "datasource": {"type": "prometheus", "uid": "prometheus"},
+        "definition": "label_values(up, instance)",
+        "query": {"query": "label_values(up, instance)", "refId": "InstanceVar"},
+        "includeAll": true,
+        "multi": true
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "API calls per hour",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(openclaw_api_calls_total{model=~\"$model\"}[1h])) by (model)", "refId": "A"}],
+      "fieldConfig": {"defaults": {"links": [{"title": "Filter by model", "url": "/d/openclaw-overview/openclaw-overview?var-model=${__series.name}", "targetBlank": false}]}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Token usage",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [
+        {"expr": "increase(openclaw_tokens_input_total[1h])", "legendFormat": "input", "refId": "A"},
+        {"expr": "increase(openclaw_tokens_output_total[1h])", "legendFormat": "output", "refId": "B"}
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Cost by provider (24h)",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "sum(increase(openclaw_cost_dollars_total{provider=~\"$provider\"}[24h])) by (provider)", "refId": "A"}],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+    },
+    {
+      "id": 4,
+      "type": "bargauge",
+      "title": "Top 5 models (24h)",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "topk(5, sum(increase(openclaw_api_calls_total[24h])) by (model))", "refId": "A"}],
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Current context size",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "openclaw_session_context_bytes", "refId": "A"}],
+      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 16}
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "Active sessions",
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "targets": [{"expr": "openclaw_sessions_active", "refId": "A"}],
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "title": "Nginx error logs",
+              "url": "/explore?left={\"datasource\":\"loki\",\"queries\":[{\"expr\":\"{job=\\\"nginx-error\\\"}\"}],\"range\":{\"from\":\"${__from}\",\"to\":\"${__to}\"}}"
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "gridPos": {"h": 6, "w": 6, "x": 6, "y": 16}
+    }
+  ]
+}
